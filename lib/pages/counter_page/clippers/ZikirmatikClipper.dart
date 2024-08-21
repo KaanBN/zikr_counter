@@ -4,17 +4,13 @@ class ZikirmatikClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
     Path path = Path();
-    double radius = 30.0;
 
-    // Dış çerçeve (yuvarlatılmış köşeler)
-    path.moveTo(0, radius);
-    path.quadraticBezierTo(0, 0, radius, 0);
-    path.lineTo(size.width - radius, 0);
-    path.quadraticBezierTo(size.width, 0, size.width, radius);
-    path.lineTo(size.width, size.height - radius);
-    path.quadraticBezierTo(size.width, size.height, size.width - radius, size.height);
-    path.lineTo(radius, size.height);
-    path.quadraticBezierTo(0, size.height, 0, size.height - radius);
+    path.moveTo(0, size.height / 10); // start from top left
+    path.quadraticBezierTo(size.width / 2, 0, size.width, size.height / 10); // curve to top right
+    path.lineTo(size.width, size.height / 2); // line to mid right
+    path.lineTo(size.width * 0.8, size.height); // line to bottom right
+    path.quadraticBezierTo(size.width / 2, size.height * 0.9, size.width * 0.2, size.height); // curve to bottom left
+    path.lineTo(0, size.height / 2); // line to mid left
     path.close();
 
     return path;
