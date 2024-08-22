@@ -11,5 +11,15 @@
   "vibration": "Titreşim",
   "sound": "Ses",
   "buttonSize": "Düğme Boyu",
-  "drawerSizeItem": "{size, select, small{Küçük} medium{Orta} large{Büyük} other{Çok Büyük}}"
+  "drawerSizeItem": "{size, select, small{Küçük} medium{Orta} large{Büyük} other{Çok Büyük}}",
+  "noItems": "Henüz bir zikir eklemediniz",
+  "updateDhikr": "Zikiri güncelle",
+  "enterDhikrName": "Zikir Adını Girin",
+  "cancel": "İptal",
+  "update": "Değiştir",
+  "counterBlaBla": "{title} başlıklı zikir sayacı {sayı}",
+  "unnamed": "İsimsiz",
+  "addDhikr": "Zikir Ekle",
+  "EnterZikrName": "Zikir Adını Giriniz",
+  "add": "Ekle"
 }

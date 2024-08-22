@@ -20,16 +20,18 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'en';
 
-  static String m0(count) => "{current counter is: ${count}}";
+  static String m0(count, title) => "dhikr counter ${count} titled ${title}";
 
-  static String m1(size) => "${Intl.select(size, {
+  static String m1(count) => "{current counter is: ${count}}";
+
+  static String m2(size) => "${Intl.select(size, {
             'small': 'Small',
             'medium': 'Medium',
             'large': 'Large',
             'other': 'Very Large',
           })}";
 
-  static String m2(size) =>
+  static String m3(size) =>
       "Expand button size tile. Current size is ${Intl.select(size, {
             'Small': 'Small',
             'Medium': 'Medium',
@@ -37,13 +39,13 @@ class MessageLookup extends MessageLookupByLibrary {
             'other': 'Very Large',
           })}";
 
-  static String m3(dayPart) =>
+  static String m4(dayPart) =>
       "Toggle sound. Current sound is ${Intl.select(dayPart, {
             'true': 'enabled',
             'false': 'not enabled',
           })}";
 
-  static String m4(dayPart) =>
+  static String m5(dayPart) =>
       "Toggle vibration. Current vibration is ${Intl.select(dayPart, {
             'true': 'enabled',
             'false': 'not enabled',
@@ -51,20 +53,35 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+        "add": MessageLookupByLibrary.simpleMessage("Add"),
+        "addDhikr": MessageLookupByLibrary.simpleMessage("Add Dhikr"),
         "buttonSize": MessageLookupByLibrary.simpleMessage("Button Size"),
-        "counterCount": m0,
-        "drawerSizeItem": m1,
-        "expandButtonSizeTileCurrentIs": m2,
+        "cancel": MessageLookupByLibrary.simpleMessage("Cancel"),
+        "counterBlaBla": m0,
+        "counterCount": m1,
+        "drawerSizeItem": m2,
+        "enterDhikrCount":
+            MessageLookupByLibrary.simpleMessage("Enter Dhikr Counter"),
+        "enterDhikrName":
+            MessageLookupByLibrary.simpleMessage("Enter Dhikr Name"),
+        "enterZikrName":
+            MessageLookupByLibrary.simpleMessage("Enter Dhikr Name"),
+        "expandButtonSizeTileCurrentIs": m3,
         "goToListPage": MessageLookupByLibrary.simpleMessage("Go to list page"),
         "increaseCounter":
             MessageLookupByLibrary.simpleMessage("increase counter"),
         "list": MessageLookupByLibrary.simpleMessage("List"),
+        "noItems": MessageLookupByLibrary.simpleMessage(
+            "You have not added a dhikr yet"),
         "opensUpDrawer":
             MessageLookupByLibrary.simpleMessage("Opens up drawer"),
         "resetCounter": MessageLookupByLibrary.simpleMessage("reset counter"),
         "sound": MessageLookupByLibrary.simpleMessage("Sound"),
-        "toggleSoundCurrentIs": m3,
-        "toggleVibrationCurrentIs": m4,
+        "toggleSoundCurrentIs": m4,
+        "toggleVibrationCurrentIs": m5,
+        "unnamed": MessageLookupByLibrary.simpleMessage("Unnamed"),
+        "update": MessageLookupByLibrary.simpleMessage("Update"),
+        "updateDhikr": MessageLookupByLibrary.simpleMessage("Update Dhikr"),
         "vibration": MessageLookupByLibrary.simpleMessage("Vibration")
       };
 }

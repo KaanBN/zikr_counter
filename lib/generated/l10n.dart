@@ -196,6 +196,116 @@ class S {
       args: [size],
     );
   }
+
+  /// `You have not added a dhikr yet`
+  String get noItems {
+    return Intl.message(
+      'You have not added a dhikr yet',
+      name: 'noItems',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Update Dhikr`
+  String get updateDhikr {
+    return Intl.message(
+      'Update Dhikr',
+      name: 'updateDhikr',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter Dhikr Name`
+  String get enterDhikrName {
+    return Intl.message(
+      'Enter Dhikr Name',
+      name: 'enterDhikrName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter Dhikr Counter`
+  String get enterDhikrCount {
+    return Intl.message(
+      'Enter Dhikr Counter',
+      name: 'enterDhikrCount',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Cancel`
+  String get cancel {
+    return Intl.message(
+      'Cancel',
+      name: 'cancel',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Update`
+  String get update {
+    return Intl.message(
+      'Update',
+      name: 'update',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `dhikr counter {count} titled {title}`
+  String counterBlaBla(Object count, Object title) {
+    return Intl.message(
+      'dhikr counter $count titled $title',
+      name: 'counterBlaBla',
+      desc: '',
+      args: [count, title],
+    );
+  }
+
+  /// `Unnamed`
+  String get unnamed {
+    return Intl.message(
+      'Unnamed',
+      name: 'unnamed',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add Dhikr`
+  String get addDhikr {
+    return Intl.message(
+      'Add Dhikr',
+      name: 'addDhikr',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Enter Dhikr Name`
+  String get enterZikrName {
+    return Intl.message(
+      'Enter Dhikr Name',
+      name: 'enterZikrName',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Add`
+  String get add {
+    return Intl.message(
+      'Add',
+      name: 'add',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {

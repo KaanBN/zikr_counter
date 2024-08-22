@@ -11,5 +11,16 @@
   "vibration": "Vibration",
   "sound": "Sound",
   "buttonSize": "Button Size",
-  "drawerSizeItem": "{size, select, small{Small} medium{Medium} large{Large} other{Very Large}}"
+  "drawerSizeItem": "{size, select, small{Small} medium{Medium} large{Large} other{Very Large}}",
+  "noItems": "You have not added a dhikr yet",
+  "updateDhikr": "Update Dhikr",
+  "enterDhikrName": "Enter Dhikr Name",
+  "enterDhikrCount": "Enter Dhikr Counter",
+  "cancel": "Cancel",
+  "update": "Update",
+  "counterBlaBla": "dhikr counter {count} titled {title}",
+  "unnamed": "Unnamed",
+  "addDhikr": "Add Dhikr",
+  "enterZikrName": "Enter Dhikr Name",
+  "add": "Add"
 }

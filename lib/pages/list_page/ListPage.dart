@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zikir_sayar/Notifiers/ZikrProvider.dart';
+import 'package:zikir_sayar/generated/l10n.dart';
 import 'package:zikir_sayar/pages/list_page/widgets/ZikrList.dart';
 
 class Listpage extends StatefulWidget {
@@ -36,11 +36,11 @@ class _ListpageState extends State<Listpage> {
             context: context,
             builder: (BuildContext context) {
               return AlertDialog(
-                title: const Text('Add Zikr'),
+                title: Text(S.of(context).addDhikr),
                 content: TextField(
                   controller: _nameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Enter Zikr Name',
+                  decoration: InputDecoration(
+                    labelText: S.of(context).enterDhikrName,
                   ),
                 ),
                 actions: [
@@ -48,7 +48,7 @@ class _ListpageState extends State<Listpage> {
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
-                    child: const Text('Cancel'),
+                    child: Text(S.of(context).cancel),
                   ),
                   TextButton(
                     onPressed: () {
@@ -56,14 +56,14 @@ class _ListpageState extends State<Listpage> {
                       _nameController.clear();
                       Navigator.of(context).pop();
                     },
-                    child: const Text('Add'),
+                    child: Text(S.of(context).add),
                   ),
                 ],
               );
             },
           );
         },
-        tooltip: 'Add Zikr',
+        tooltip: S.of(context).addDhikr,
         child: const Icon(Icons.add),
       ),
     );

@@ -20,16 +20,18 @@ typedef String MessageIfAbsent(String messageStr, List<dynamic> args);
 class MessageLookup extends MessageLookupByLibrary {
   String get localeName => 'tr';
 
-  static String m0(count) => "şu anki sayaç: ${count}";
+  static String m0(count, title) => "${title} başlıklı zikir sayacı {sayı}";
 
-  static String m1(size) => "${Intl.select(size, {
+  static String m1(count) => "şu anki sayaç: ${count}";
+
+  static String m2(size) => "${Intl.select(size, {
             'small': 'Küçük',
             'medium': 'Orta',
             'large': 'Büyük',
             'other': 'Çok Büyük',
           })}";
 
-  static String m2(size) =>
+  static String m3(size) =>
       "Düğme boyutu döşemesini genişletin. Geçerli boyut ${Intl.select(size, {
             'Small': 'küçük',
             'Medium': 'orta',
@@ -37,13 +39,13 @@ class MessageLookup extends MessageLookupByLibrary {
             'other': 'çok büyük',
           })}";
 
-  static String m3(dayPart) =>
+  static String m4(dayPart) =>
       "Sesi aç kapat. Şu an ses ${Intl.select(dayPart, {
             'true': 'etkin',
             'false': 'etkin değil',
           })}";
 
-  static String m4(dayPart) =>
+  static String m5(dayPart) =>
       "Titreşimi değiştir. Şu an titreşim ${Intl.select(dayPart, {
             'true': 'etkin',
             'false': 'etkin değil',
@@ -51,20 +53,31 @@ class MessageLookup extends MessageLookupByLibrary {
 
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
+        "add": MessageLookupByLibrary.simpleMessage("Ekle"),
+        "addDhikr": MessageLookupByLibrary.simpleMessage("Zikir Ekle"),
         "buttonSize": MessageLookupByLibrary.simpleMessage("Düğme Boyu"),
-        "counterCount": m0,
-        "drawerSizeItem": m1,
-        "expandButtonSizeTileCurrentIs": m2,
+        "cancel": MessageLookupByLibrary.simpleMessage("İptal"),
+        "counterBlaBla": m0,
+        "counterCount": m1,
+        "drawerSizeItem": m2,
+        "enterDhikrName":
+            MessageLookupByLibrary.simpleMessage("Zikir Adını Girin"),
+        "expandButtonSizeTileCurrentIs": m3,
         "goToListPage":
             MessageLookupByLibrary.simpleMessage("Liste sayfasına git"),
         "increaseCounter": MessageLookupByLibrary.simpleMessage("sayacı artır"),
         "list": MessageLookupByLibrary.simpleMessage("Liste"),
+        "noItems":
+            MessageLookupByLibrary.simpleMessage("Henüz bir zikir eklemediniz"),
         "opensUpDrawer":
             MessageLookupByLibrary.simpleMessage("Yan menüyü açar"),
         "resetCounter": MessageLookupByLibrary.simpleMessage("sayacı sıfırla"),
         "sound": MessageLookupByLibrary.simpleMessage("Ses"),
-        "toggleSoundCurrentIs": m3,
-        "toggleVibrationCurrentIs": m4,
+        "toggleSoundCurrentIs": m4,
+        "toggleVibrationCurrentIs": m5,
+        "unnamed": MessageLookupByLibrary.simpleMessage("İsimsiz"),
+        "update": MessageLookupByLibrary.simpleMessage("Değiştir"),
+        "updateDhikr": MessageLookupByLibrary.simpleMessage("Zikiri güncelle"),
         "vibration": MessageLookupByLibrary.simpleMessage("Titreşim")
       };
 }
