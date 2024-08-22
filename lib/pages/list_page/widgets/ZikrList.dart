@@ -10,8 +10,23 @@ class Zikrlist extends StatefulWidget {
 }
 
 class _ZikrlistState extends State<Zikrlist> {
+  late String _selectedZikrName;
+
+  @override
+  void initState() {
+    super.initState();
+    final zikrProvider = Provider.of<ZikrProvider>(context, listen: false);
+    _selectedZikrName = zikrProvider.selectedZikrName?? '';
+  }
+
   @override
   Widget build(BuildContext context) {
+    final zikrProvider = Provider.of<ZikrProvider>(context);
+
+    if (_selectedZikrName.isNotEmpty) {
+      zikrProvider.selectZikr(_selectedZikrName);
+    }
+
     return Consumer<ZikrProvider>(
       builder: (context, zikrProvider, child) {
         if (zikrProvider.items.length == 0) {
@@ -81,13 +96,17 @@ class _ZikrlistState extends State<Zikrlist> {
                         );
                       },
                     ),
-                    IconButton(
-                      icon: Icon(Icons.delete),
-                      onPressed: () {
-                        zikrProvider.removeZikr(zikrProvider.items[index]['name']);
-                        zikrProvider.selectZikr(zikrProvider.items[0]['name']);
-                      },
-                    ),
+                    (zikrProvider.items.length > 1) ? (
+                        IconButton(
+                          icon: Icon(Icons.delete),
+                          onPressed: () {
+                            zikrProvider.removeZikr(zikrProvider.items[index]['name']);
+                            if(zikrProvider.items.isNotEmpty){
+                              zikrProvider.selectZikr(zikrProvider.items[0]['name']);
+                            }
+                          },
+                        )
+                    ): Text(""),
                     IconButton(
                       icon: Icon(Icons.arrow_forward),
                       onPressed: () {

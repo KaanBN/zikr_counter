@@ -14,10 +14,6 @@ void main() {
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   FlutterNativeSplash.remove();
 
-  /*runApp(
-      const MyApp()
-  );*/
-
   runApp(
     ChangeNotifierProvider(
       create: (_) => ZikrProvider(),
@@ -29,34 +25,8 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    /*return MultiProvider(
-        providers: [
-          ChangeNotifierProvider(
-              create: (context) => ZikrProvider(),
-          )
-        ],
-        child: MaterialApp(
-          title: 'Flutter Demo',
-          themeMode: ThemeMode.system,
-          theme: brightTheme,
-          darkTheme: darkTheme,
-          localizationsDelegates: const [
-            S.delegate,
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          supportedLocales: const [
-            Locale('en'), // English
-            Locale('tr'), // turkis
-          ],
-          home: const Counterpage(),
-        ),
-    );*/
-
     return MaterialApp(
       title: 'Flutter Demo',
       themeMode: ThemeMode.system,

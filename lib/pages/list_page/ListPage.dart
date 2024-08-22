@@ -12,24 +12,7 @@ class Listpage extends StatefulWidget {
 }
 
 class _ListpageState extends State<Listpage> {
-  late SharedPreferences prefs;
-  bool _isInitialized = false;
   final _nameController = TextEditingController();
-
-  Future<void> initPrefs() async {
-    prefs = await SharedPreferences.getInstance();
-  }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    initPrefs().then((_) {
-      setState(() {
-        _isInitialized = true;
-      });
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,18 +20,6 @@ class _ListpageState extends State<Listpage> {
 
     void addZikr(String name){
       zikrProvider.addZikr(name);
-    }
-
-    if (!_isInitialized) {
-      return Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: true,
-        ),
-        backgroundColor: Colors.green,
-        body: const Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
     }
 
     return Scaffold(
@@ -98,3 +69,4 @@ class _ListpageState extends State<Listpage> {
     );
   }
 }
+

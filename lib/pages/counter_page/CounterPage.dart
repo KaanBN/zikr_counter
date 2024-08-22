@@ -114,12 +114,16 @@ class _CounterpageState extends State<Counterpage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     initPrefs().then((_) {
       setState(() {
         _isInitialized = true;
       });
+      final zikrProvider = Provider.of<ZikrProvider>(context, listen: false);
+      if (zikrProvider.items.isEmpty) {
+        zikrProvider.addZikr('Unnamed');
+      }
+      zikrProvider.selectZikr(zikrProvider.items[0]['name']);
     });
   }
 
@@ -159,7 +163,6 @@ class _CounterpageState extends State<Counterpage> {
 
     String currentZikrName = zikrProvider.selectedZikrName?? 'Unnamed';
     zikrProvider.selectZikr(currentZikrName);
-    int currentZikrCount = zikrProvider.selectedZikr?['count']?? 0;
 
     return Scaffold(
       backgroundColor: Colors.green,
@@ -302,13 +305,27 @@ class _CounterpageState extends State<Counterpage> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     // Counter Display at the Center
-                    Center(
+                    /*Center(
                       child: Container(
                         color: Colors.greenAccent,
                         padding: const EdgeInsets.symmetric(vertical: 1,horizontal: 10),
                           child: Semantics(
                             label: S.of(context).counterCount(zikrProvider.selectedZikr!['count']),
                               child: SevenSegmentDisplay(value: zikrProvider.selectedZikr!['count']))
+                      ),
+                    ),*/
+                    Center(
+                      child: Consumer<ZikrProvider>(
+                        builder: (context, zikrProvider, child) {
+                          return Container(
+                            color: Colors.greenAccent,
+                            padding: const EdgeInsets.symmetric(vertical: 1,horizontal: 10),
+                            child: Semantics(
+                              label: S.of(context).counterCount(zikrProvider.selectedZikr!['count']),
+                              child: SevenSegmentDisplay(value: zikrProvider.selectedZikr!['count']),
+                            ),
+                          );
+                        },
                       ),
                     ),
                     SizedBox(height: deviceHeight * 0.02), // Space between counter and buttons
