@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vibration/vibration.dart';
+import 'package:zikir_sayar/generated/l10n.dart';
 
 import '../../widgets/SevenSegmentDisplay.dart';
 
@@ -14,14 +17,20 @@ class Counterpage extends StatefulWidget {
 
 class _CounterpageState extends State<Counterpage> {
   int _counter = 0;
-  bool _vibrationEnabled = true;
-  bool _soundEnabled = true;
+  late bool _vibrationEnabled;
+  late bool _soundEnabled;
+  bool _isInitialized = false;
+  Map<String, bool> buttonSizes = {'small': false, 'medium': true, 'large': false, 'very_large': false};
+  double _buttonModifier = 0.7;
+  double _smallButtonModifier = 4;
+  late SharedPreferences prefs;
+
 
   void _incrementCounter() {
     setState(() {
       _counter++;
       if (_vibrationEnabled) {
-        HapticFeedback.vibrate();
+        Vibration.vibrate(duration: 200);
       }
       if (_soundEnabled) {
         SystemSound.play(SystemSoundType.click);
@@ -36,14 +45,59 @@ class _CounterpageState extends State<Counterpage> {
   }
 
   void _toggleVibration() {
+    prefs.setBool("vibration_enabled", !_vibrationEnabled);
     setState(() {
       _vibrationEnabled =!_vibrationEnabled;
     });
   }
 
   void _toggleSound() {
+    prefs.setBool("sound_enabled", !_soundEnabled);
     setState(() {
       _soundEnabled =!_soundEnabled;
+    });
+  }
+
+  void selectSize(String size) {
+    prefs.setString("button_size", size);
+    buttonSizes.forEach((key, value) => buttonSizes[key] = false);
+    buttonSizes[size] = true;
+    _updateButtonSize(size);
+  }
+
+  void _updateButtonSize(String size) {
+    switch (size) {
+      case 'small':
+        _buttonModifier = 0.5;
+        _smallButtonModifier = 5;
+        break;
+      case 'medium':
+        _buttonModifier = 0.7;
+        _smallButtonModifier = 4;
+        break;
+      case 'large':
+        _buttonModifier = 0.9;
+        _smallButtonModifier = 3;
+        break;
+      case 'very_large':
+        _buttonModifier = 1.2;
+        _smallButtonModifier = 2;
+        break;
+    }
+  }
+
+  Future<void> initPrefs() async {
+    prefs = await SharedPreferences.getInstance();
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    initPrefs().then((value) {
+      _vibrationEnabled = prefs.getBool("vibration_enabled") == null ? true : prefs.getBool("vibration_enabled")!;
+      _soundEnabled = prefs.getBool("sound_enabled") == null ? true : prefs.getBool("sound_enabled")!;
+      prefs.getString("button_size") == null ? selectSize("normal") :  selectSize(prefs.getString("button_size")!);
     });
   }
 
@@ -52,17 +106,138 @@ class _CounterpageState extends State<Counterpage> {
     double deviceWidth = MediaQuery.of(context).size.width;
     double deviceHeight = MediaQuery.of(context).size.height;
 
-    // Define the SVG size as a fraction of the device dimensions
-    double svgWidth = deviceWidth * 0.8; // 80% of device width
-    double svgHeight = deviceHeight * 0.5; // Maintain aspect ratio (adjust as needed)
+    double svgWidth = deviceWidth * 0.8;
+    double svgHeight = deviceHeight * 0.5;
+    double buttonSize = deviceWidth * 0.2;
+    double smallButtonSize = deviceWidth * 0.1;
 
-    // Calculate dynamic sizes based on device dimensions
-    double buttonSize = deviceWidth * 0.2; // 20% of device width
-    double smallButtonSize = deviceWidth * 0.1; // 10% of device width
-    double fontSize = deviceWidth * 0.08; // 8% of device width
+    String getEnabledSize() {
+      String enabledSize = '';
+      buttonSizes.forEach((key, value) {
+        if (value) {
+          enabledSize = key;
+        }
+      });
+      return enabledSize;
+    }
 
     return Scaffold(
       backgroundColor: Colors.green,
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        actions: [
+          Builder(
+              builder: (context) {
+                return Semantics(
+                  label: S.of(context).opensUpDrawer,
+                  child: IconButton(
+                      onPressed: () {
+                        Scaffold.of(context).openEndDrawer();
+                      },
+                      icon: const Icon(Icons.menu)
+                  ),
+                );
+              }
+          )
+        ],
+      ),
+      endDrawer: SafeArea(
+        child: Drawer(
+          backgroundColor: Colors.green[300],
+          child: ListView(
+            // Important: Remove any padding from the ListView.
+            padding: EdgeInsets.zero,
+            children: [
+              Semantics(
+                  label: S.of(context).toggleVibrationCurrentIs(_vibrationEnabled.toString()),
+                  child: ListTile(
+                  onTap: _toggleVibration,
+                  contentPadding: const EdgeInsets.all(10),
+                  title:Row(
+                    children:[
+                      Icon(Icons.vibration),
+                      SizedBox(width: 10),
+                      Text(
+                        S.of(context).vibration,
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black
+                        ),
+                      ),
+                    ],
+                  ) ,
+                  trailing: Switch(
+                      value: _vibrationEnabled,
+                      onChanged: (bool value) {
+                        _toggleVibration();
+                      }
+                  )
+                ),
+              ),
+              Semantics(
+                label: S.of(context).toggleSoundCurrentIs(_soundEnabled.toString()),
+                child: ListTile(
+                    onTap: _toggleSound,
+                    contentPadding: const EdgeInsets.all(10),
+                    title:Row(
+                      children:[
+                        Icon(Icons.volume_up),
+                        SizedBox(width: 10),
+                        Text(
+                          S.of(context).sound,
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black
+                          ),
+                        ),
+                      ],
+                    ) ,
+                    trailing: Switch(
+                        value: _soundEnabled,
+                        onChanged: (bool value) {
+                          _toggleSound();
+                        }
+                    )
+                ),
+              ),
+              Semantics(
+                // label: 'Expand button size tile. Current size is ${getEnabledSize()}',
+                label: S.of(context).expandButtonSizeTileCurrentIs(getEnabledSize()),
+                child: ExpansionTile(
+                  title:Row(
+                      children:[
+                        Icon(Icons.straighten),
+                        SizedBox(width: 10),
+                        Text(
+                          S.of(context).buttonSize,
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black
+                          ),
+                        ),
+                      ],
+                    ),
+                  children: [
+                    for (var entry in buttonSizes.entries)
+                      Semantics(
+                        // label: entry.key,
+                        label: S.of(context).drawerSizeItem(entry.key),
+                        child: ListTile(
+                          title: Text(S.of(context).drawerSizeItem(entry.key)),
+                          trailing: entry.value? const Icon(Icons.check) : const Icon(Icons.close),
+                          onTap: () => setState(() => selectSize(entry.key))
+                        ),
+                      )
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
       body: Stack(
         children: [
           // Centered Container for SVG with Aspect Ratio
@@ -89,8 +264,10 @@ class _CounterpageState extends State<Counterpage> {
                     Center(
                       child: Container(
                         color: Colors.greenAccent,
-                        padding: EdgeInsets.symmetric(vertical: 1,horizontal: 10),
-                          child: SevenSegmentDisplay(value: _counter)
+                        padding: const EdgeInsets.symmetric(vertical: 1,horizontal: 10),
+                          child: Semantics(
+                            label: S.of(context).counterCount(_counter),
+                              child: SevenSegmentDisplay(value: _counter))
                       ),
                     ),
                     SizedBox(height: deviceHeight * 0.02), // Space between counter and buttons
@@ -98,31 +275,36 @@ class _CounterpageState extends State<Counterpage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        ElevatedButton(
-                          onPressed: _resetCounter,
-                          style: ElevatedButton.styleFrom(
-                            shape: CircleBorder(),
-                            padding: EdgeInsets.all(smallButtonSize / 4), // Adjust size dynamically
-                            backgroundColor: Colors.redAccent,
+                        Semantics(
+                          label: S.of(context).resetCounter,
+                          child: ElevatedButton(
+                            onPressed: _resetCounter,
+                            style: ElevatedButton.styleFrom(
+                              shape: const CircleBorder(),
+                              padding: EdgeInsets.all(smallButtonSize / _smallButtonModifier), // Adjust size dynamically
+                              backgroundColor: Colors.redAccent,
+                            ),
+                            child: const Icon(Icons.refresh, color: Colors.white),
                           ),
-                          child: Icon(Icons.refresh, color: Colors.white),
                         ),
                       ],
                     ),
                     SizedBox(height: deviceHeight * 0.02), // Space between small buttons and big button
                     // Large Button at Bottom Center
                     Center(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          _incrementCounter();
-                          HapticFeedback.vibrate();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          shape: const CircleBorder(),
-                          padding: EdgeInsets.all(buttonSize * 0.6), // Adjust size dynamically
-                          backgroundColor: Colors.blueAccent,
+                      child: Semantics(
+                        label: S.of(context).increaseCounter,
+                        child: ElevatedButton(
+                            onPressed: () async {
+                            _incrementCounter();
+                          },
+                          style: ElevatedButton.styleFrom(
+                            shape: const CircleBorder(),
+                            padding: EdgeInsets.all(buttonSize * _buttonModifier), // Adjust size dynamically
+                            backgroundColor: Colors.blueAccent,
+                          ),
+                          child: null
                         ),
-                        child: null
                       ),
                     ),
                   ],
@@ -132,61 +314,31 @@ class _CounterpageState extends State<Counterpage> {
           ),
         ],
       ),
-      bottomNavigationBar: BottomAppBar(
+      bottomNavigationBar: Padding(
+        padding: EdgeInsets.fromLTRB(0, 0, 0, deviceHeight * 0.02),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            // Button 1
-            ElevatedButton(
-              onPressed: () {
-                // Handle button press
-              },
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10), // Rounded corners
-                ),// Adjust size dynamically
-                backgroundColor: Colors.blueAccent,
-              ),
-              child: Icon(Icons.add, color: Colors.white, size: buttonSize / 3),
-            ),
-            // Button 2
-            ElevatedButton(
-              onPressed: () {
-                // Handle button press
-              },
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10), // Rounded corners
+            Semantics(
+              label: S.of(context).goToListPage,
+              child: ElevatedButton(
+                onPressed: () {
+                  // Handle button press
+                },
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10), // Rounded corners
+                  ),
+                  backgroundColor: Colors.blueAccent,
                 ),
-                backgroundColor: Colors.blueAccent,
-              ),
-              child: Icon(Icons.add, color: Colors.white, size: buttonSize / 3),
-            ),
-            // Button 3
-            ElevatedButton(
-              onPressed: () {
-                // Handle button press
-              },
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10), // Rounded corners
+                child: Text(
+                  S.current.list,
+                  style: const TextStyle(
+                    fontSize: 30,
+                    color: Colors.white
+                  ),
                 ),
-                backgroundColor: Colors.blueAccent,
               ),
-              child: Icon(Icons.add, color: Colors.white, size: buttonSize / 3),
-            ),
-            // Button 4
-            ElevatedButton(
-              onPressed: () {
-                // Handle button press
-              },
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10), // Rounded corners
-                ),
-                backgroundColor: Colors.blueAccent,
-              ),
-              child: Icon(Icons.add, color: Colors.white, size: buttonSize / 3),
             ),
           ],
         ),

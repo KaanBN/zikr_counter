@@ -1,0 +1,15 @@
+{
+  "counterCount": "{current counter is: {count}}",
+  "resetCounter": "reset counter",
+  "increaseCounter": "increase counter",
+  "list": "List",
+  "goToListPage": "Go to list page",
+  "opensUpDrawer": "Opens up drawer",
+  "toggleVibrationCurrentIs": "Toggle vibration. Current vibration is {dayPart, select, true{enabled} false{not enabled}}",
+  "toggleSoundCurrentIs": "Toggle sound. Current sound is {dayPart, select, true{enabled} false{not enabled}}",
+  "expandButtonSizeTileCurrentIs": "Expand button size tile. Current size is {size, select, Small{Small} Medium{Medium} Large{Large} other{Very Large}}",
+  "vibration": "Vibration",
+  "sound": "Sound",
+  "buttonSize": "Button Size",
+  "drawerSizeItem": "{size, select, small{Small} medium{Medium} large{Large} other{Very Large}}"
+}

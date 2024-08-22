@@ -1,0 +1,15 @@
+{
+  "counterCount": "şu anki sayaç: {count}",
+  "resetCounter": "sayacı sıfırla",
+  "increaseCounter": "sayacı artır",
+  "list": "Liste",
+  "goToListPage": "Liste sayfasına git",
+  "opensUpDrawer": "Yan menüyü açar",
+  "toggleVibrationCurrentIs": "Titreşimi değiştir. Şu an titreşim {dayPart, select, true{etkin} false{etkin değil}}",
+  "toggleSoundCurrentIs": "Sesi aç kapat. Şu an ses {dayPart, select, true{etkin} false{etkin değil}}",
+  "expandButtonSizeTileCurrentIs": "Düğme boyutu döşemesini genişletin. Geçerli boyut {size, select, Small{küçük} Medium{orta} Large{büyük} other{çok büyük}}",
+  "vibration": "Titreşim",
+  "sound": "Ses",
+  "buttonSize": "Düğme Boyu",
+  "drawerSizeItem": "{size, select, small{Küçük} medium{Orta} large{Büyük} other{Çok Büyük}}"
+}
