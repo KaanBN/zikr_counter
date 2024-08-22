@@ -1,19 +1,49 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
-import 'package:zikir_sayar/Notifiers/ZikrNotifier.dart';
 
-class Zikrprovider extends InheritedNotifier<Zikrnotifier> {
-  final Zikrnotifier zikrName;
+class ZikrProvider with ChangeNotifier {
+  final List<Map<String, dynamic>> _nameJsonList = [];
+  String? _selectedZikrName;
 
-  Zikrprovider({super.key, required super.child})
-      : zikrName = Zikrnotifier(),
-        super(
-        notifier: Zikrnotifier(),
-      );
+  UnmodifiableListView<Map<String, dynamic>> get items => UnmodifiableListView(_nameJsonList);
+  String? get selectedZikrName => _selectedZikrName;
+  Map<String, dynamic>? get selectedZikr => _nameJsonList.firstWhere((element) => element['name'] == _selectedZikrName);
 
-  static Zikrnotifier of(BuildContext context) {
-    final Zikrprovider? result =
-    context.dependOnInheritedWidgetOfExactType<Zikrprovider>();
-    assert(result != null, 'No CounterProvider found in context');
-    return result!.zikrName;
+
+  void addZikr(String newName)
+  {
+    _nameJsonList.add({
+      "name": newName,
+      "count": 0
+    });
+    _selectedZikrName = newName;
+    notifyListeners();
+  }
+
+  void updateZikr({required String zikrName, required int count})
+  {
+    final itemIndex = _nameJsonList.indexWhere((item) => item['name'] == zikrName);
+    if (itemIndex!= -1) {
+      _nameJsonList[itemIndex]['count'] = count;
+    } else {
+      print('Item with name $zikrName not found');
+    }
+    notifyListeners();
+  }
+
+  void removeZikr(String zikrName) {
+    final itemIndex = _nameJsonList.indexWhere((item) => item['name'] == zikrName);
+    if (itemIndex!= -1) {
+      _nameJsonList.removeAt(itemIndex);
+    } else {
+      print('Item with name $zikrName not found');
+    }
+    notifyListeners();
+  }
+
+  void selectZikr(String zikrName) {
+    _selectedZikrName = zikrName;
+    notifyListeners();
   }
 }

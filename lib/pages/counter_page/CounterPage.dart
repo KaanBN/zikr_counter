@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vibration/vibration.dart';
+import 'package:zikir_sayar/Notifiers/ZikrProvider.dart';
 import 'package:zikir_sayar/generated/l10n.dart';
 import 'package:zikir_sayar/pages/list_page/ListPage.dart';
+import 'package:audioplayers/audioplayers.dart';
+import 'package:zikir_sayar/widgets/SevenSegmentDisplay.dart';
 
-import '../../widgets/SevenSegmentDisplay.dart';
 
 class Counterpage extends StatefulWidget {
   const Counterpage({super.key});
@@ -24,18 +27,33 @@ class _CounterpageState extends State<Counterpage> {
   double _buttonModifier = 0.7;
   double _smallButtonModifier = 4;
   late SharedPreferences prefs;
+  AudioPlayer audioPlayer = AudioPlayer();
 
 
-  void _incrementCounter() {
+  /*void _incrementCounter() {
     setState(() {
       _counter++;
       if (_vibrationEnabled) {
         Vibration.vibrate(duration: 200);
       }
       if (_soundEnabled) {
-        SystemSound.play(SystemSoundType.click);
+        audioPlayer.play(AssetSource('sounds/soft_typewriter.wav'));
       }
     });
+  }*/
+
+  void _incrementCounter() {
+    final zikrProvider = Provider.of<ZikrProvider>(context, listen: false);
+    zikrProvider.updateZikr(
+      zikrName: zikrProvider.selectedZikrName!,
+      count: zikrProvider.selectedZikr!['count'] + 1,
+    );
+    if (_vibrationEnabled) {
+      Vibration.vibrate(duration: 200);
+    }
+    if (_soundEnabled) {
+      audioPlayer.play(AssetSource('sounds/soft_typewriter.wav'));
+    }
   }
 
   void _resetCounter() {
@@ -107,6 +125,7 @@ class _CounterpageState extends State<Counterpage> {
 
   @override
   Widget build(BuildContext context) {
+    final zikrProvider = Provider.of<ZikrProvider>(context);
     double deviceWidth = MediaQuery.of(context).size.width;
     double deviceHeight = MediaQuery.of(context).size.height;
 
@@ -134,9 +153,18 @@ class _CounterpageState extends State<Counterpage> {
       );
     }
 
+    if (zikrProvider.items.isEmpty) {
+      zikrProvider.addZikr('Unnamed');
+    }
+
+    String currentZikrName = zikrProvider.selectedZikrName?? 'Unnamed';
+    zikrProvider.selectZikr(currentZikrName);
+    int currentZikrCount = zikrProvider.selectedZikr?['count']?? 0;
+
     return Scaffold(
       backgroundColor: Colors.green,
       appBar: AppBar(
+        title: Text(currentZikrName),
         automaticallyImplyLeading: false,
         actions: [
           Builder(
@@ -279,8 +307,8 @@ class _CounterpageState extends State<Counterpage> {
                         color: Colors.greenAccent,
                         padding: const EdgeInsets.symmetric(vertical: 1,horizontal: 10),
                           child: Semantics(
-                            label: S.of(context).counterCount(_counter),
-                              child: SevenSegmentDisplay(value: _counter))
+                            label: S.of(context).counterCount(zikrProvider.selectedZikr!['count']),
+                              child: SevenSegmentDisplay(value: zikrProvider.selectedZikr!['count']))
                       ),
                     ),
                     SizedBox(height: deviceHeight * 0.02), // Space between counter and buttons
@@ -307,14 +335,15 @@ class _CounterpageState extends State<Counterpage> {
                     Center(
                       child: Semantics(
                         label: S.of(context).increaseCounter,
-                        child: ElevatedButton(
-                            onPressed: () async {
+                        child: FilledButton(
+                          onPressed: () async {
                             _incrementCounter();
                           },
                           style: ElevatedButton.styleFrom(
                             shape: const CircleBorder(),
                             padding: EdgeInsets.all(buttonSize * _buttonModifier), // Adjust size dynamically
                             backgroundColor: Colors.blueAccent,
+                            enableFeedback: false
                           ),
                           child: null
                         ),

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:zikir_sayar/Notifiers/ZikrNotifier.dart';
 import 'package:zikir_sayar/Notifiers/ZikrProvider.dart';
+import 'package:zikir_sayar/pages/list_page/widgets/ZikrList.dart';
 
 class Listpage extends StatefulWidget {
   const Listpage({super.key});
@@ -11,18 +12,9 @@ class Listpage extends StatefulWidget {
 }
 
 class _ListpageState extends State<Listpage> {
-  late Zikrnotifier zikrProvider;
   late SharedPreferences prefs;
   bool _isInitialized = false;
-
-  void addZikr(String name){
-    zikrProvider.updateZikrList(
-      {
-        "name": name,
-        "count": 0
-      }
-    );
-  }
+  final _nameController = TextEditingController();
 
   Future<void> initPrefs() async {
     prefs = await SharedPreferences.getInstance();
@@ -41,7 +33,11 @@ class _ListpageState extends State<Listpage> {
 
   @override
   Widget build(BuildContext context) {
-    zikrProvider = Zikrprovider.of(context);
+    final zikrProvider = Provider.of<ZikrProvider>(context);
+
+    void addZikr(String name){
+      zikrProvider.addZikr(name);
+    }
 
     if (!_isInitialized) {
       return Scaffold(
@@ -60,18 +56,44 @@ class _ListpageState extends State<Listpage> {
       appBar: AppBar(
         automaticallyImplyLeading: true,
       ),
-      body: Center(
-        child: zikrProvider.nameJsonList.isEmpty
-            ? const Text(
-          "You haven't adde any zikr yet",
-          style: TextStyle(fontSize: 24, color: Colors.white),
-        )
-            : const Placeholder(), // Replace with any other widget you want to show
+      body: const Center(
+        child: Zikrlist(),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => {},
-        tooltip: 'Decrement',
-        child: const Icon(Icons.remove),
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text('Add Zikr'),
+                content: TextField(
+                  controller: _nameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Enter Zikr Name',
+                  ),
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('Cancel'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      addZikr(_nameController.text);
+                      _nameController.clear();
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('Add'),
+                  ),
+                ],
+              );
+            },
+          );
+        },
+        tooltip: 'Add Zikr',
+        child: const Icon(Icons.add),
       ),
     );
   }
