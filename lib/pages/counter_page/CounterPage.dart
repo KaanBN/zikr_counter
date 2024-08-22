@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vibration/vibration.dart';
 import 'package:zikir_sayar/generated/l10n.dart';
+import 'package:zikir_sayar/pages/list_page/ListPage.dart';
 
 import '../../widgets/SevenSegmentDisplay.dart';
 
@@ -88,16 +88,20 @@ class _CounterpageState extends State<Counterpage> {
 
   Future<void> initPrefs() async {
     prefs = await SharedPreferences.getInstance();
+
+    _vibrationEnabled = prefs.getBool("vibration_enabled") == null ? true : prefs.getBool("vibration_enabled")!;
+    _soundEnabled = prefs.getBool("sound_enabled") == null ? true : prefs.getBool("sound_enabled")!;
+    prefs.getString("button_size") == null ? selectSize("normal") :  selectSize(prefs.getString("button_size")!);
   }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    initPrefs().then((value) {
-      _vibrationEnabled = prefs.getBool("vibration_enabled") == null ? true : prefs.getBool("vibration_enabled")!;
-      _soundEnabled = prefs.getBool("sound_enabled") == null ? true : prefs.getBool("sound_enabled")!;
-      prefs.getString("button_size") == null ? selectSize("normal") :  selectSize(prefs.getString("button_size")!);
+    initPrefs().then((_) {
+      setState(() {
+        _isInitialized = true;
+      });
     });
   }
 
@@ -119,6 +123,15 @@ class _CounterpageState extends State<Counterpage> {
         }
       });
       return enabledSize;
+    }
+
+    if (!_isInitialized) {
+      return const Scaffold(
+        backgroundColor: Colors.green,
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
     }
 
     return Scaffold(
@@ -155,11 +168,11 @@ class _CounterpageState extends State<Counterpage> {
                   contentPadding: const EdgeInsets.all(10),
                   title:Row(
                     children:[
-                      Icon(Icons.vibration),
-                      SizedBox(width: 10),
+                      const Icon(Icons.vibration),
+                      const SizedBox(width: 10),
                       Text(
                         S.of(context).vibration,
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                             color: Colors.black
@@ -182,11 +195,11 @@ class _CounterpageState extends State<Counterpage> {
                     contentPadding: const EdgeInsets.all(10),
                     title:Row(
                       children:[
-                        Icon(Icons.volume_up),
-                        SizedBox(width: 10),
+                        const Icon(Icons.volume_up),
+                        const SizedBox(width: 10),
                         Text(
                           S.of(context).sound,
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
                               color: Colors.black
@@ -208,11 +221,11 @@ class _CounterpageState extends State<Counterpage> {
                 child: ExpansionTile(
                   title:Row(
                       children:[
-                        Icon(Icons.straighten),
-                        SizedBox(width: 10),
+                        const Icon(Icons.straighten),
+                        const SizedBox(width: 10),
                         Text(
                           S.of(context).buttonSize,
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
                               color: Colors.black
@@ -323,7 +336,11 @@ class _CounterpageState extends State<Counterpage> {
               label: S.of(context).goToListPage,
               child: ElevatedButton(
                 onPressed: () {
-                  // Handle button press
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const Listpage(),
+                    ),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   shape: RoundedRectangleBorder(
