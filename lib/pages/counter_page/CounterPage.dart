@@ -172,7 +172,10 @@ class _CounterpageState extends State<Counterpage> {
       backgroundColor: Colors.green,
       appBar: AppBar(
         title: Consumer<ZikrProvider>(builder: (context, zikr, _) {
-          return Text(zikr.selectedZikrName ?? "Unnamed-");
+          if(zikr.selectedZikrName == null){
+            zikr.selectZikr("unnamed");
+          }
+          return Text(zikr.selectedZikrName!);
         }),
         automaticallyImplyLeading: false,
         actions: [
